@@ -25,28 +25,13 @@ app.use(helmet({
 }));
 
 // CORS configuration
-const allowedOrigins = [
-  process.env.FRONTEND_URL,
-  'http://localhost:3000',
-  'http://localhost:5173',
-  'http://localhost:5000',
-].filter(Boolean);
-
 app.use(cors({
-  origin: (origin, callback) => {
-    // Log the origin for debug (Railway/Vercel)
-    if (origin) logger.debug(`Incoming CORS origin: ${origin}`);
-
-    // If no origin (Server-to-server / Postman) or matched, allow it
-    if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS policy Error: Origin ${origin} is not allowed.`));
-  },
+  origin: true, // Reflect back the requester's origin (Allows any domain)
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 }));
+
 
 // Request logging (skip in test)
 if (process.env.NODE_ENV !== 'test') {
